@@ -60,7 +60,6 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'Doe',
                 birthday: new Date('1990-01-01')
             });
-
             // Define valid cost data
             const costData = {
                 description: 'Groceries',
@@ -68,7 +67,6 @@ describe('POST /api/add (Cost)', () => {
                 userid: 123,
                 sum: 50.5
             };
-
             // Make POST request to create cost
             const response = await request(app)
                 .post('/api/add')
@@ -76,12 +74,16 @@ describe('POST /api/add (Cost)', () => {
 
             // Verify response status is 201 Created
             expect(response.status).toBe(201);
-            // Verify all cost fields are in response
+            // Verify description field matches input
             expect(response.body)
                 .toHaveProperty('description', 'Groceries');
+            // Verify category field matches input
             expect(response.body).toHaveProperty('category', 'food');
+            // Verify userid field matches input
             expect(response.body).toHaveProperty('userid', 123);
+            // Verify sum field matches input
             expect(response.body).toHaveProperty('sum', 50.5);
+            // Verify date field is present
             expect(response.body).toHaveProperty('date');
         }
     );
@@ -97,7 +99,6 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'Smith',
                 birthday: new Date('1992-05-15')
             });
-
             // Define cost data with today's date
             const today = new Date();
             const costData = {
@@ -105,6 +106,7 @@ describe('POST /api/add (Cost)', () => {
                 category: 'health',
                 userid: 456,
                 sum: 100,
+                // Convert today's date to ISO string format for API
                 date: today.toISOString()
             };
 
@@ -145,13 +147,14 @@ describe('POST /api/add (Cost)', () => {
             // Send request with whitespace-only description
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with whitespace-only
+                // description to test validation
                 .send({
                     description: '   ',
                     category: 'food',
                     userid: 123,
                     sum: 50
                 });
-
             // Verify 400 error for empty description
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -182,13 +185,14 @@ describe('POST /api/add (Cost)', () => {
             // Send whitespace-only category
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with whitespace-only
+                // category to test validation
                 .send({
                     description: 'Test',
                     category: '   ',
                     userid: 123,
                     sum: 50
                 });
-
             // Verify 400 error for empty category
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -219,6 +223,8 @@ describe('POST /api/add (Cost)', () => {
             // Send request without sum
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data without a "sum"
+                // property to test validation
                 .send({
                     description: 'Test',
                     category: 'food',
@@ -243,17 +249,17 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Send invalid category
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with an invalid
+                // category to test validation
                 .send({
                     description: 'Test',
                     category: 'invalid_category',
                     userid: 123,
                     sum: 50
                 });
-
             // Verify 400 error with category message
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -261,7 +267,6 @@ describe('POST /api/add (Cost)', () => {
                 .toContain('not in the list of accepted categories');
         }
     );
-
     // Test invalid userid format
     test(
         'should return 400 if userid is not an integer',
@@ -269,13 +274,14 @@ describe('POST /api/add (Cost)', () => {
             // Send string userid
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with a non-numeric
+                // userid to test validation
                 .send({
                     description: 'Test',
                     category: 'food',
                     userid: 'abc',
                     sum: 50
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -283,7 +289,6 @@ describe('POST /api/add (Cost)', () => {
                 .toBe('User ID must be a positive integer.');
         }
     );
-
     // Test negative userid
     test(
         'should return 400 if userid is not positive',
@@ -291,13 +296,14 @@ describe('POST /api/add (Cost)', () => {
             // Send negative userid
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with a negative
+                // userid to test validation
                 .send({
                     description: 'Test',
                     category: 'food',
                     userid: -5,
                     sum: 50
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -305,7 +311,6 @@ describe('POST /api/add (Cost)', () => {
                 .toBe('User ID must be a positive integer.');
         }
     );
-
     // Test zero userid
     test(
         'should return 400 if userid is zero',
@@ -313,13 +318,14 @@ describe('POST /api/add (Cost)', () => {
             // Send zero as userid
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with userid
+                // set to 0 to test validation
                 .send({
                     description: 'Test',
                     category: 'food',
                     userid: 0,
                     sum: 50
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -327,7 +333,6 @@ describe('POST /api/add (Cost)', () => {
                 .toBe('User ID must be a positive integer.');
         }
     );
-
     // Test decimal userid
     test(
         'should return 400 if userid is a decimal',
@@ -335,13 +340,14 @@ describe('POST /api/add (Cost)', () => {
             // Send decimal userid
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with a non-integer
+                // userid to test validation
                 .send({
                     description: 'Test',
                     category: 'food',
                     userid: 123.5,
                     sum: 50
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -349,7 +355,6 @@ describe('POST /api/add (Cost)', () => {
                 .toBe('User ID must be a positive integer.');
         }
     );
-
     // Test invalid sum values
     test(
         'should return 400 if sum is not a number',
@@ -361,17 +366,17 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Send string as sum
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with a non-numeric
+                // sum to test validation
                 .send({
                     description: 'Test',
                     category: 'food',
                     userid: 123,
                     sum: 'abc'
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -379,7 +384,6 @@ describe('POST /api/add (Cost)', () => {
                 .toBe('Sum must be a non-negative finite number.');
         }
     );
-
     // Test negative sum
     test(
         'should return 400 if sum is negative',
@@ -391,17 +395,17 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Send negative sum
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with a negative
+                // sum to test validation
                 .send({
                     description: 'Test',
                     category: 'food',
                     userid: 123,
                     sum: -10
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -409,7 +413,6 @@ describe('POST /api/add (Cost)', () => {
                 .toBe('Sum must be a non-negative finite number.');
         }
     );
-
     // Test infinity sum
     test(
         'should return 400 if sum is Infinity',
@@ -421,17 +424,17 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Send Infinity as sum
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with an Infinity
+                // sum to test validation
                 .send({
                     description: 'Test',
                     category: 'food',
                     userid: 123,
                     sum: Infinity
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -439,7 +442,6 @@ describe('POST /api/add (Cost)', () => {
                 .toBe('Sum must be a non-negative finite number.');
         }
     );
-
     // Test zero sum acceptance
     test(
         'should accept sum of zero',
@@ -451,17 +453,17 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Send zero sum (free item)
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with the "sum" property
+                // set to 0 to test validation
                 .send({
                     description: 'Free item',
                     category: 'food',
                     userid: 123,
                     sum: 0
                 });
-
             // Verify zero is accepted
             expect(response.status).toBe(201);
             expect(response.body.sum).toBe(0);
@@ -479,15 +481,18 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Send invalid date string
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with an invalid
+                // date to test validation
                 .send({
                     description: 'Test',
                     category: 'food',
                     userid: 123,
                     sum: 50,
+                    // Set the date property
+                    // to an invalid date string
                     date: 'invalid-date'
                 });
 
@@ -509,7 +514,6 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Create yesterday's date
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
@@ -517,11 +521,14 @@ describe('POST /api/add (Cost)', () => {
             // Send past date
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with a past
+                // date to test date validation
                 .send({
                     description: 'Past expense',
                     category: 'food',
                     userid: 123,
                     sum: 50,
+                    // Convert yesterday's date to ISO string format
                     date: yesterday.toISOString()
                 });
 
@@ -532,7 +539,6 @@ describe('POST /api/add (Cost)', () => {
                 .toBe('Date cannot be in the past.');
         }
     );
-
     // Test user existence validation
     test(
         'should return 400 if user does not exist',
@@ -540,13 +546,14 @@ describe('POST /api/add (Cost)', () => {
             // Send request with non-existent user
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with a userid
+                // that does not exist in database
                 .send({
                     description: 'Test',
                     category: 'food',
                     userid: 999999,
                     sum: 50
                 });
-
             // Verify user not found error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -554,7 +561,6 @@ describe('POST /api/add (Cost)', () => {
                 .toBe('User 999999 does not exist.');
         }
     );
-
     // Test all valid categories
     test(
         'should accept food category',
@@ -566,10 +572,10 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Send food category
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with valid food category
                 .send({
                     description: 'Lunch',
                     category: 'food',
@@ -592,10 +598,10 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Send health category
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with valid health category
                 .send({
                     description: 'Doctor',
                     category: 'health',
@@ -618,10 +624,10 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Send housing category
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with valid housing category
                 .send({
                     description: 'Rent',
                     category: 'housing',
@@ -644,10 +650,10 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Send sports category
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with valid sports category
                 .send({
                     description: 'Gym membership',
                     category: 'sports',
@@ -670,10 +676,10 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Send education category
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with valid education category
                 .send({
                     description: 'Textbook',
                     category: 'education',
@@ -696,10 +702,11 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Send uppercase category
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with uppercase
+                // category to test normalization
                 .send({
                     description: 'Test',
                     category: 'FOOD',
@@ -723,10 +730,11 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Send description and category with whitespace
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with leading/trailing
+                // whitespace to test trimming
                 .send({
                     description: '  Groceries  ',
                     category: '  food  ',
@@ -751,7 +759,6 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Define cost data
             const costData = {
                 description: 'Test cost',
@@ -759,7 +766,6 @@ describe('POST /api/add (Cost)', () => {
                 userid: 999,
                 sum: 25
             };
-
             // Create cost via API
             await request(app)
                 .post('/api/add')
@@ -772,7 +778,6 @@ describe('POST /api/add (Cost)', () => {
             expect(savedCost.sum).toBe(25);
         }
     );
-
     // Test future date (should be accepted)
     test(
         'should accept future dates',
@@ -784,7 +789,6 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Create tomorrow's date
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
@@ -792,11 +796,14 @@ describe('POST /api/add (Cost)', () => {
             // Send future date
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with a future
+                // date to verify it is accepted
                 .send({
                     description: 'Future expense',
                     category: 'food',
                     userid: 123,
                     sum: 50,
+                    // Convert tomorrow's date to ISO string format
                     date: tomorrow.toISOString()
                 });
 
@@ -817,20 +824,20 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Capture time before request
             const beforeRequest = new Date();
 
             // Send request without date field
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data without date
+                // field to test default behavior
                 .send({
                     description: 'Test',
                     category: 'food',
                     userid: 123,
                     sum: 50
                 });
-
             // Capture time after request
             const afterRequest = new Date();
 
@@ -841,7 +848,6 @@ describe('POST /api/add (Cost)', () => {
             expect(responseDate <= afterRequest).toBe(true);
         }
     );
-
     // Test decimal sum (should work)
     test(
         'should accept decimal sum values',
@@ -853,17 +859,17 @@ describe('POST /api/add (Cost)', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Send decimal sum value
             const response = await request(app)
                 .post('/api/add')
+                // Send cost data with decimal
+                // sum to test precision handling
                 .send({
                     description: 'Decimal cost',
                     category: 'food',
                     userid: 123,
                     sum: 123.45
                 });
-
             // Verify decimal sum accepted
             expect(response.status).toBe(201);
             expect(response.body.sum).toBe(123.45);

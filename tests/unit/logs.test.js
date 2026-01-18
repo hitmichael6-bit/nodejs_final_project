@@ -55,23 +55,35 @@ describe('GET /api/logs', () => {
             // Create test logs in database
             await Log.create([
                 {
-                    // First test log entry
+                    // Timestamp of the log entry
                     time: new Date(),
+                    // HTTP method used
                     method: 'GET',
+                    // Server port number
                     port: 3001,
+                    // Request path
                     path: '/api/test',
+                    // HTTP response status code
                     status: 200,
+                    // Request duration in milliseconds
                     duration_ms: 50,
+                    // Log message description
                     message: 'Test log 1'
                 },
                 {
-                    // Second test log entry
+                    // Timestamp of the log entry
                     time: new Date(),
+                    // HTTP method used
                     method: 'POST',
+                    // Server port number
                     port: 3002,
+                    // Request path
                     path: '/api/add',
+                    // HTTP response status code
                     status: 201,
+                    // Request duration in milliseconds
                     duration_ms: 100,
+                    // Log message description
                     message: 'Test log 2'
                 }
             ]);
@@ -130,7 +142,8 @@ describe('GET /api/logs', () => {
     test(
         'should return logs sorted by time (newest first)',
         async () => {
-            // Create three different timestamps for testing sort order
+            // Create three different timestamps
+            // for testing sort order
             const time1 = new Date('2025-01-01T10:00:00Z');
             const time2 = new Date('2025-01-01T12:00:00Z');
             const time3 = new Date('2025-01-01T11:00:00Z');
@@ -140,25 +153,37 @@ describe('GET /api/logs', () => {
                 {
                     // Oldest log (10:00)
                     time: time1,
+                    // HTTP method used
                     method: 'GET',
+                    // Server port number
                     port: 3001,
+                    // Request path
                     path: '/1',
+                    // Log message description
                     message: 'Log 1'
                 },
                 {
                     // Newest log (12:00)
                     time: time2,
+                    // HTTP method used
                     method: 'GET',
+                    // Server port number
                     port: 3001,
+                    // Request path
                     path: '/2',
+                    // Log message description
                     message: 'Log 2'
                 },
                 {
                     // Middle log (11:00)
                     time: time3,
+                    // HTTP method used
                     method: 'GET',
+                    // Server port number
                     port: 3001,
+                    // Request path
                     path: '/3',
+                    // Log message description
                     message: 'Log 3'
                 }
             ]);
@@ -201,11 +226,17 @@ describe('GET /api/logs', () => {
         async () => {
             // Create a test log entry
             await Log.create({
+                // Timestamp of the log entry
                 time: new Date(),
+                // HTTP method used
                 method: 'GET',
+                // Server port number
                 port: 3001,
+                // Request path
                 path: '/test',
+                // HTTP response status code
                 status: 200,
+                // Log message description
                 message: 'Test'
             });
 
@@ -231,12 +262,19 @@ describe('GET /api/logs', () => {
         async () => {
             // Create a test log with all fields
             await Log.create({
+                // Timestamp of the log entry
                 time: new Date(),
+                // HTTP method used
                 method: 'POST',
+                // Server port number
                 port: 3002,
+                // Request path
                 path: '/api/add',
+                // HTTP response status code
                 status: 201,
+                // Request duration in milliseconds
                 duration_ms: 75,
+                // Log message description
                 message: 'Test log for field validation'
             });
 
@@ -254,12 +292,19 @@ describe('GET /api/logs', () => {
             // Verify log was found
             expect(createdLog).toBeDefined();
             // Verify all required fields are present
+            // Check timestamp exists
             expect(createdLog).toHaveProperty('time');
+            // Check HTTP method is POST
             expect(createdLog).toHaveProperty('method', 'POST');
+            // Check port number is 3002
             expect(createdLog).toHaveProperty('port', 3002);
+            // Check request path is /api/add
             expect(createdLog).toHaveProperty('path', '/api/add');
+            // Check status code is 201
             expect(createdLog).toHaveProperty('status', 201);
+            // Check duration is 75ms
             expect(createdLog).toHaveProperty('duration_ms', 75);
+            // Check message exists
             expect(createdLog).toHaveProperty('message');
         }
     );

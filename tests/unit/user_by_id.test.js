@@ -65,23 +65,32 @@ describe('GET /api/users/:id', () => {
                 last_name: 'Doe',
                 birthday: new Date('1990-01-15')
             });
-
             // Create multiple costs for this user
             await Cost.create([
+                // First cost item
                 {
-                    // First cost item
+                    // Cost item description
                     description: 'Food',
+                    // Expense category type
                     category: 'food',
+                    // Reference to user who made the expense
                     userid: userId,
+                    // Cost amount in currency units
                     sum: 50,
+                    // Date when expense occurred
                     date: new Date()
                 },
+                // Second cost item
                 {
-                    // Second cost item
+                    // Cost item description
                     description: 'Gym',
+                    // Expense category type
                     category: 'sports',
+                    // Reference to user who made the expense
                     userid: userId,
+                    // Cost amount in currency units
                     sum: 100,
+                    // Date when expense occurred
                     date: new Date()
                 }
             ]);
@@ -118,7 +127,6 @@ describe('GET /api/users/:id', () => {
                 last_name: 'Smith',
                 birthday: new Date('1995-06-20')
             });
-
             // Make GET request to /api/users/:id
             const response = await request(app).get(
                 `/api/users/${userId}`
@@ -241,31 +249,45 @@ describe('GET /api/users/:id', () => {
                 last_name: 'Johnson',
                 birthday: new Date('1988-03-10')
             });
-
             // Create multiple costs with decimal values
             await Cost.create([
+                // First cost with decimal sum
                 {
-                    // First cost with decimal sum
+                    // Cost item description
                     description: 'Item 1',
+                    // Expense category type
                     category: 'food',
+                    // Reference to user who made the expense
                     userid: userId,
+                    // Cost amount in currency units (decimal)
                     sum: 25.50,
+                    // Date when expense occurred
                     date: new Date()
                 },
+                // Second cost with decimal sum
                 {
-                    // Second cost with decimal sum
+                    // Cost item description
                     description: 'Item 2',
+                    // Expense category type
                     category: 'health',
+                    // Reference to user who made the expense
                     userid: userId,
+                    // Cost amount in currency units (decimal)
                     sum: 100.75,
+                    // Date when expense occurred
                     date: new Date()
                 },
+                // Third cost with decimal sum
                 {
-                    // Third cost with decimal sum
+                    // Cost item description
                     description: 'Item 3',
+                    // Expense category type
                     category: 'education',
+                    // Reference to user who made the expense
                     userid: userId,
+                    // Cost amount in currency units (decimal)
                     sum: 50.25,
+                    // Date when expense occurred
                     date: new Date()
                 }
             ]);
@@ -277,7 +299,8 @@ describe('GET /api/users/:id', () => {
 
             // Verify status code is 200 OK
             expect(response.status).toBe(200);
-            // Verify total is correct (25.50 + 100.75 + 50.25 = 176.5)
+            // Verify total is correct
+            // (25.50 + 100.75 + 50.25 = 176.5)
             expect(response.body.total).toBe(176.5);
         }
     );
@@ -296,7 +319,6 @@ describe('GET /api/users/:id', () => {
                 last_name: 'Williams',
                 birthday: new Date('1992-07-05')
             });
-
             // Make GET request to /api/users/:id
             const response = await request(app).get(
                 `/api/users/${userId}`
@@ -325,38 +347,49 @@ describe('GET /api/users/:id', () => {
 
             // Create two test users
             await User.create([
+                // First user
                 {
-                    // First user
                     id: userId1,
                     first_name: 'User',
                     last_name: 'One',
                     birthday: new Date('1990-01-01')
                 },
+                // Second user
                 {
-                    // Second user
                     id: userId2,
                     first_name: 'User',
                     last_name: 'Two',
                     birthday: new Date('1995-01-01')
                 }
+                // End of users array
             ]);
 
             // Create costs for both users
             await Cost.create([
+                // Cost for user 1
                 {
-                    // Cost for user 1
+                    // Cost item description
                     description: 'User1 cost',
+                    // Expense category type
                     category: 'food',
+                    // Reference to user who made the expense
                     userid: userId1,
+                    // Cost amount in currency units
                     sum: 50,
+                    // Date when expense occurred
                     date: new Date()
                 },
+                // Cost for user 2
                 {
-                    // Cost for user 2
+                    // Cost item description
                     description: 'User2 cost',
+                    // Expense category type
                     category: 'food',
+                    // Reference to user who made the expense
                     userid: userId2,
+                    // Cost amount in currency units
                     sum: 200,
+                    // Date when expense occurred
                     date: new Date()
                 }
             ]);
@@ -368,7 +401,8 @@ describe('GET /api/users/:id', () => {
 
             // Verify status code is 200 OK
             expect(response.status).toBe(200);
-            // Verify total includes only user 1's costs (not user 2's)
+            // Verify total includes only
+            // user 1's costs (not user 2's)
             expect(response.body.total).toBe(50);
         }
     );

@@ -8,16 +8,22 @@
 export default function getMongoUri() {
     // Extract MongoDB connection parameters from environment
     const {
-        MONGO_PROTOCOL,  // Protocol (mongodb or mongodb+srv)
-        MONGO_USER,      // Database username
-        MONGO_PASSWORD,  // Database password
-        MONGO_HOST,      // Database host address
-        MONGO_DBNAME,    // Database name
+        // Protocol (mongodb or mongodb+srv)
+        MONGO_PROTOCOL,
+        // Database username
+        MONGO_USER,
+        // Database password
+        MONGO_PASSWORD,
+        // Database host address
+        MONGO_HOST,
+        // Database name
+        MONGO_DBNAME,
     } = process.env;
 
     // Choose database name based on environment
     let dbName;
 
+    // Use test database when running in test environment
     if (process.env.NODE_ENV === 'test') {
         dbName = process.env.MONGO_DBNAME_TEST || `${MONGO_DBNAME}_test`;
     } else {

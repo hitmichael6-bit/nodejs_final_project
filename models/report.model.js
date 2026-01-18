@@ -1,13 +1,10 @@
 /*
- * Report Model
- * Stores cached monthly cost reports.
- * 
- * COMPUTED DESIGN PATTERN:
- * This collection implements the caching layer for the Computed Pattern.
- * - Reports for PAST months are stored here after first generation
- * - Subsequent requests retrieve the cached report from this collection
- * - Reports for current/future months are NOT cached (data may change)
+ * Report Model - Stores cached monthly cost reports.
+ * Implements caching layer for the Computed Pattern:
+ * - Past month reports are cached after first generation
+ * - Current/future month reports are NOT cached (data may change)
  */
+// MongoDB library for schema definition and database operations
 import mongoose from 'mongoose';
 
 // Schema for cached report documents

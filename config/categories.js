@@ -6,11 +6,16 @@
 
 // Array of all valid cost categories
 const CATEGORIES = [
-    'food',       // Food and groceries expenses
-    'health',     // Health and medical expenses
-    'housing',    // Housing and rent expenses
-    'sports',     // Sports and fitness expenses
-    'education'   // Education and learning expenses
+    // Food and groceries expenses
+    'food',
+    // Health and medical expenses
+    'health',
+    // Housing and rent expenses
+    'housing',
+    // Sports and fitness expenses
+    'sports',
+    // Education and learning expenses
+    'education'
 ];
 
 // Export categories array for use in models and routes

@@ -1,25 +1,21 @@
 /*
- * Report Routes
- * Generates monthly cost reports grouped by category.
- *
- * COMPUTED DESIGN PATTERN IMPLEMENTATION:
- * This route implements the Computed Design Pattern for
- * caching.
- * - Reports for PAST months are cached in the 'reports'
- *   collection
- * - Reports for CURRENT/FUTURE months are computed on-demand
- *   (data may change)
- * - Cached reports are retrieved from database if available
- * - New reports for past months are automatically cached
- *   after generation
+ * Report Routes - Generates monthly cost reports grouped by category.
+ * Implements the Computed Design Pattern: past month reports are cached,
+ * current/future months are computed on-demand. Cached reports are
+ * retrieved from database; new past-month reports are auto-cached.
  */
+// Import Express framework for routing
 import express from 'express';
+// Import Cost model for querying cost data
 import Cost from '../models/cost.model.js';
+// Import Report model for caching reports
 import Report from '../models/report.model.js';
+// Import User model for user validation
 import User from '../models/user.model.js';
+// Import valid categories list
 import CATEGORIES from '../config/categories.js';
+// Import logging utility for endpoint access tracking
 import { logEndpointAccess } from '../utils/logger.js';
-
 /*
  * Determines if a given year/month is in the past.
  * Returns true if the month has already ended.
@@ -36,13 +32,14 @@ function isPastMonth(year, month) {
     return targetMonthStart < currentMonthStart;
 }
 
+// Create Express router
 const router = express.Router();
-
 /*
  * GET /report
  * Generates a monthly cost report for a specific user.
  * Query params: id (or userid), year, month
  */
+// Handler for GET requests to /report endpoint
 router.get('/report', async (req, res) => {
     try {
         logEndpointAccess(req, 'Endpoint accessed: GET /api/report');
@@ -59,7 +56,6 @@ router.get('/report', async (req, res) => {
                 message: 'Missing required fields.'
             });
         }
-
         // Convert parameters to numbers
         const numericUserId = Number(userIdValue);
         const numericYear = Number(year);
@@ -74,6 +70,7 @@ router.get('/report', async (req, res) => {
             // Return error for invalid numeric values
             return res.status(400).json({
                 id: 400,
+                // Error message for invalid parameter types
                 message:
                     'User ID, year and month must be ' +
                     'positive integers.'
@@ -87,7 +84,6 @@ router.get('/report', async (req, res) => {
                 message: 'Month number must be between 1 and 12.'
             });
         }
-
         // Validate that id refers to an existing user
         const userExists = await User.exists({ id: numericUserId });
 
@@ -98,10 +94,8 @@ router.get('/report', async (req, res) => {
                 message: `User ${numericUserId} does not exist.`
             });
         }
-
         // Determine if this month is in the past
         const isPastMonthBool = isPastMonth(numericYear, numericMonth);
-
         /*
          * COMPUTED PATTERN: Check cache for past months
          * If report exists in database, return it immediately
@@ -118,8 +112,8 @@ router.get('/report', async (req, res) => {
             if (cachedReport) {
                 return res.status(200).json(cachedReport);
             }
+            // End of cache lookup block
         }
-
         /*
          * Report not in cache (or not a past month)
          * Generate report by querying all costs for this user
@@ -142,8 +136,11 @@ router.get('/report', async (req, res) => {
             ) {
                 // Add cost to appropriate category
                 groupedCats[cost.category]?.push({
+                    // Cost amount
                     sum: cost.sum,
+                    // Cost description text
                     description: cost.description,
+                    // Day of month extracted from date
                     day: date.getDate()
                 });
             }
@@ -151,16 +148,20 @@ router.get('/report', async (req, res) => {
 
         // Build report object matching required JSON format
         const report = {
+            // User identifier
             userid: numericUserId,
+            // Report year
             year: numericYear,
+            // Report month
             month: numericMonth,
+            // Costs grouped by category
             costs: CATEGORIES.map(cat => ({ [cat]: groupedCats[cat] }))
         };
-
         /*
          * COMPUTED PATTERN: Cache report for past months
          * Future requests for this month will retrieve from cache
          */
+        // Only cache reports for past months
         if (isPastMonthBool) {
             // Save report to database for caching
             await Report.create(report);
@@ -176,5 +177,5 @@ router.get('/report', async (req, res) => {
         });
     }
 });
-
+// Export router for use in main application
 export default router;

@@ -3,7 +3,9 @@
  * Defines the schema for cost item documents in MongoDB.
  * Includes validation to prevent costs with past dates.
  */
+// MongoDB library for schema definition and validation
 import mongoose from 'mongoose';
+// Array of valid cost categories for enum validation
 import CATEGORIES from '../config/categories.js';
 
 // Schema definition for cost documents
@@ -47,6 +49,7 @@ const schema = {
      * Date validation: prevents adding costs with past dates.
      * Compares against start of today (00:00:00 server local time).
      */
+    // Date field with validation to reject past dates
     date: {
         type: Date,
         default: Date.now,
@@ -58,6 +61,7 @@ const schema = {
                 // Ensure date is not in the past
                 return value >= startOfToday;
             },
+            // Error message used when validation fails
             message: 'Date cannot be in the past.'
         }
     }

@@ -3,13 +3,16 @@
  * Manages MongoDB connection using Mongoose.
  * Ensures connection is established before services start.
  */
+// MongoDB ODM for database operations
 import mongoose from 'mongoose';
+// Custom logging utility for consistent log formatting
 import { logger } from './utils/logger.js';
 
 /*
  * Connects to MongoDB using the provided connection string.
  * Checks if already connected to avoid duplicate connections.
  */
+// Establishes a connection to MongoDB using the provided URI
 export async function connectDb(mongoUri) {
     try {
         // Validate that connection string is provided

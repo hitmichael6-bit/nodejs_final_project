@@ -3,16 +3,18 @@
  * Handles POST /api/add for creating new users.
  * Validates user data before saving to database.
  */
+// Import Express framework for routing
 import express from 'express';
+// Import User model for database operations
 import User from '../models/user.model.js';
+// Import logging utility for endpoint access tracking
 import { logEndpointAccess } from '../utils/logger.js';
-
 const router = express.Router();
-
 /*
  * POST /add
  * Creates a new user with id, first_name, last_name, and birthday.
  */
+// Handler for POST requests to /add endpoint
 router.post('/add', async (req, res) => {
     try {
         logEndpointAccess(req, 'Endpoint accessed: POST /api/add (user)');
@@ -47,7 +49,6 @@ router.post('/add', async (req, res) => {
                 message: 'User ID must be a positive integer.'
             });
         }
-
         // Parse and validate birthday date
         const birthdayDate = new Date(birthday);
 
@@ -57,8 +58,8 @@ router.post('/add', async (req, res) => {
                 id: 400,
                 message: 'Invalid birthday format.'
             });
+            // End of birthday format validation
         }
-
         /*
          * Prevent future birthday dates:
          * Compare against start of today (00:00:00 server local time).
@@ -74,7 +75,6 @@ router.post('/add', async (req, res) => {
                 message: 'Birthday cannot be in the future.'
             });
         }
-
         // Check if a user with the same ID already exists
         const userExists = await User.exists({ id: numericId });
 
@@ -85,7 +85,6 @@ router.post('/add', async (req, res) => {
                 message: `User ${numericId} already exists.`
             });
         }
-
         // Create new user document
         const user = new User({
             id: numericId,
@@ -93,7 +92,6 @@ router.post('/add', async (req, res) => {
             last_name: lastNameTrimmed,
             birthday: birthdayDate
         });
-
         // Save user to database
         const savedUser = await user.save();
 
@@ -107,5 +105,5 @@ router.post('/add', async (req, res) => {
         });
     }
 });
-
+// Export router for use in main application
 export default router;

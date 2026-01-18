@@ -15,12 +15,12 @@ import { logEndpointAccess } from '../utils/logger.js';
 
 // Create Express router
 const router = express.Router();
-
 /*
  * POST /add
  * Creates a new cost item with description, category,
  * userid, sum, and optional date.
  */
+// Handler for POST requests to /add endpoint
 router.post('/add', async (req, res) => {
     try {
         logEndpointAccess(req, 'Endpoint accessed: POST /api/add (cost)');
@@ -56,6 +56,7 @@ router.post('/add', async (req, res) => {
                     `Category '${categoryTrimmed}' is not in the ` +
                     `list of accepted categories. ` +
                     `The accepted categories are: ` +
+                    // Append comma-separated list of valid categories
                     `${CATEGORIES.join(', ')}.`
             });
         }
@@ -65,6 +66,7 @@ router.post('/add', async (req, res) => {
 
         // Ensure user ID is a positive integer
         if (!Number.isInteger(numericUserId) || numericUserId <= 0) {
+            // Return error for invalid user ID
             return res.status(400).json({
                 id: 400,
                 message: 'User ID must be a positive integer.'
@@ -92,12 +94,13 @@ router.post('/add', async (req, res) => {
 
         // Validate date format
         if (Number.isNaN(requestDate.getTime())) {
+            // Return error for invalid date
             return res.status(400).json({
                 id: 400,
                 message: 'Invalid date format.'
             });
+            // End of date format validation
         }
-
         /*
          * Prevent past-dated costs:
          * Compare against start of today (00:00:00 server local time).
@@ -108,6 +111,7 @@ router.post('/add', async (req, res) => {
 
         // Reject if cost date is before today
         if (requestDate < startOfToday) {
+            // Return error for past-dated cost
             return res.status(400).json({
                 id: 400,
                 message: 'Date cannot be in the past.'
@@ -119,6 +123,7 @@ router.post('/add', async (req, res) => {
 
         // Return error if user not found
         if (!userExists) {
+            // User does not exist in the database
             return res.status(400).json({
                 id: 400,
                 message: `User ${numericUserId} does not exist.`
@@ -148,5 +153,5 @@ router.post('/add', async (req, res) => {
         });
     }
 });
-
+// Export router for use in main application
 export default router;

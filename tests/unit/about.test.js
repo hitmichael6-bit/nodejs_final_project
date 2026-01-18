@@ -126,4 +126,5 @@ describe('GET /api/about', () => {
             });
         }
     );
+    // End of GET /api/about test suite
 });

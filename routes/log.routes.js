@@ -3,18 +3,20 @@
  * Handles GET requests for retrieving HTTP request logs.
  * Logs are sorted by time in descending order (most recent first).
  */
+// Import Express framework for routing
 import express from 'express';
+// Import Log model for database operations
 import Log from '../models/log.model.js';
+// Import logging utility for endpoint access tracking
 import { logEndpointAccess } from '../utils/logger.js';
-
+// Create Express router
 const router = express.Router();
-
 /*
- * GET /logs
- * Returns all logs from the database.
+ * GET /logs - Returns all logs from the database.
  * Excludes MongoDB internal fields (_id, __v).
  * Sorted by time descending (newest first).
  */
+// Handler for GET requests to /logs endpoint
 router.get('/logs', async (req, res) => {
     try {
         // Log the incoming request
@@ -39,5 +41,5 @@ router.get('/logs', async (req, res) => {
         });
     }
 });
-
+// Export router for use in main application
 export default router;

@@ -3,6 +3,7 @@
  * Defines the schema for HTTP request logs stored in MongoDB.
  * Logs track every HTTP request received by the server.
  */
+// MongoDB library for schema definition and database operations
 import mongoose from 'mongoose';
 
 // Schema definition for log documents

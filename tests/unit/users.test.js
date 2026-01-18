@@ -54,20 +54,21 @@ describe('GET /api/users', () => {
         async () => {
             // Create test users in database
             await User.create([
+                // First test user
                 {
-                    // First test user
                     id: 1,
                     first_name: 'John',
                     last_name: 'Doe',
                     birthday: new Date('1990-01-15')
                 },
+                // Second test user
                 {
-                    // Second test user
                     id: 2,
                     first_name: 'Jane',
                     last_name: 'Smith',
                     birthday: new Date('1995-06-20')
                 }
+                // End of users array
             ]);
 
             // Make GET request to /api/users
@@ -86,7 +87,8 @@ describe('GET /api/users', () => {
     test(
         'should return empty array when no users exist',
         async () => {
-            // Make GET request to /api/users without creating any users
+            // Make GET request to /api/users
+            // without creating any users
             const response = await request(app).get('/api/users');
 
             // Verify status code is 200 OK
@@ -109,7 +111,6 @@ describe('GET /api/users', () => {
                 last_name: 'User',
                 birthday: new Date('2000-01-01')
             });
-
             // Make GET request to /api/users
             const response = await request(app).get('/api/users');
 
@@ -133,7 +134,6 @@ describe('GET /api/users', () => {
                 last_name: 'Johnson',
                 birthday: new Date('1988-12-25')
             });
-
             // Make GET request to /api/users
             const response = await request(app).get('/api/users');
 

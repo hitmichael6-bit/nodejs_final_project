@@ -1,11 +1,10 @@
 /*
- * User Model
- * Defines the schema for user documents in MongoDB.
- * 
+ * User Model - Defines the schema for user documents in MongoDB.
  * IMPORTANT: 'id' and '_id' are different properties
  * - id: Application-level user ID (Number, unique)
  * - _id: MongoDB's internal ObjectId (auto-generated)
  */
+// MongoDB library for schema definition and database operations
 import mongoose from 'mongoose';
 
 // Schema definition for user documents
@@ -44,6 +43,7 @@ const schema = {
                 // Birthday must be today or earlier
                 return value <= startOfToday;
             },
+            // Error message used when validation fails
             message: 'Birthday cannot be in the future.'
         }
     }

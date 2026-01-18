@@ -70,6 +70,17 @@ npm run test:watch    # Watch mode
 npm run test:coverage # With coverage report
 ```
 
+**Running Specific Test Suites:**
+```bash
+npm test -- tests/unit/about.test.js       # About service tests
+npm test -- tests/unit/add_cost.test.js    # Cost creation tests
+npm test -- tests/unit/add_user.test.js    # User creation tests
+npm test -- tests/unit/logs.test.js        # Logs service tests
+npm test -- tests/unit/report.test.js      # Report generation tests
+npm test -- tests/unit/user_by_id.test.js  # User by ID tests
+npm test -- tests/unit/users.test.js       # User listing tests
+```
+
 **Note on Test Execution**  
 Unit tests are designed to be executed locally using
 `npm test` with valid MongoDB credentials.
@@ -92,10 +103,12 @@ Returns all HTTP request logs sorted by time (most recent first).
 ```json
 [
   {
-    "service": "Users",
-    "method": "POST",
-    "url": "/api/add",
     "time": "2024-01-15T10:30:00.000Z",
+    "method": "POST",
+    "port": 3002,
+    "path": "/api/add",
+    "status": 201,
+    "duration_ms": 45,
     "message": "Endpoint accessed: POST /api/add (user)"
   }
 ]
@@ -287,7 +300,7 @@ Returns the list of developers who built this application.
 
 ### Logging System
 - All HTTP requests are automatically logged to MongoDB
-- Logs include service name, method, URL, timestamp, and message
+- Logs include method, path, port, status, duration, timestamp, and message
 - Centralized log retrieval through Logs service
 
 ### Data Validation
@@ -342,10 +355,12 @@ Returns the list of developers who built this application.
 ### Log
 ```javascript
 {
-  service: String,    // Service name
-  method: String,     // HTTP method
-  url: String,        // Request URL
   time: Date,         // Request timestamp
+  method: String,     // HTTP method
+  port: Number,       // Service port number
+  path: String,       // Request path
+  status: Number,     // HTTP status code
+  duration_ms: Number,// Request processing time
   message: String     // Log message
 }
 ```

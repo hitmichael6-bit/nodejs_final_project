@@ -64,25 +64,39 @@ describe('GET /api/report', () => {
                 last_name: 'Doe',
                 birthday: new Date('1990-01-01')
             });
+            // Extract user ID for cost creation
             const userid = user.id;
+            // Get current date for time-based queries
             const now = new Date();
+            // Extract year for report filtering
             const year = now.getFullYear();
+            // Extract month (1-indexed) for report filtering
             const month = now.getMonth() + 1;
 
             // Create test costs for current month
             await Cost.create([
                 {
+                    // Cost item description
                     description: 'Pizza',
+                    // Expense category type
                     category: 'food',
+                    // Reference to user who made the expense
                     userid,
+                    // Cost amount in currency units
                     sum: 50,
+                    // Date when expense occurred
                     date: now
                 },
                 {
+                    // Cost item description
                     description: 'Gym',
+                    // Expense category type
                     category: 'sports',
+                    // Reference to user who made the expense
                     userid,
+                    // Cost amount in currency units
                     sum: 100,
+                    // Date when expense occurred
                     date: now
                 }
             ]);
@@ -95,9 +109,13 @@ describe('GET /api/report', () => {
 
             // Verify successful response
             expect(response.status).toBe(200);
+            // Check userid matches requested user
             expect(response.body).toHaveProperty('userid', userid);
+            // Check year matches requested year
             expect(response.body).toHaveProperty('year', year);
+            // Check month matches requested month
             expect(response.body).toHaveProperty('month', month);
+            // Check costs array is present
             expect(response.body).toHaveProperty('costs');
             // Verify costs is an array
             expect(Array.isArray(response.body.costs)).toBe(true);
@@ -115,17 +133,26 @@ describe('GET /api/report', () => {
                 last_name: 'Smith',
                 birthday: new Date('1992-05-15')
             });
+            // Extract user ID for cost creation
             const userid = user.id;
+            // Get current date for time-based queries
             const now = new Date();
+            // Extract year for report filtering
             const year = now.getFullYear();
+            // Extract month (1-indexed) for report filtering
             const month = now.getMonth() + 1;
 
             // Create education cost for testing
             await Cost.create({
+                // Cost item description
                 description: 'Book',
+                // Expense category type
                 category: 'education',
+                // Reference to user who made the expense
                 userid,
+                // Cost amount in currency units
                 sum: 75,
+                // Date when expense occurred
                 date: now
             });
 
@@ -148,21 +175,28 @@ describe('GET /api/report', () => {
                 costs.find(obj => 'education' in obj);
 
             // Verify education category structure
+            // Check education category object exists
             expect(educationObj).toBeDefined();
+            // Check education array has one item
             expect(educationObj.education).toHaveLength(1);
+            // Check sum is 75
             expect(educationObj.education[0])
                 .toHaveProperty('sum', 75);
+            // Check description is Book
             expect(educationObj.education[0])
                 .toHaveProperty('description', 'Book');
+            // Check day property exists
             expect(educationObj.education[0])
                 .toHaveProperty('day');
         }
+        // End of test case
     );
 
     /*
      * CRITICAL: Test Computed Design Pattern caching
      * Past month reports should be cached in database
      */
+    // Begin caching behavior test
     test(
         'should cache past month reports (Computed Pattern)',
         async () => {
@@ -173,21 +207,30 @@ describe('GET /api/report', () => {
                 last_name: 'Johnson',
                 birthday: new Date('1988-03-20')
             });
+            // Extract user ID for cost creation
             const userid = user.id;
-            // Create date 2 months in the past
+            // Get current date to calculate past month
             const pastDate = new Date();
+            // Set date to 2 months ago for caching test
             pastDate.setMonth(pastDate.getMonth() - 2);
+            // Extract year for report filtering
             const year = pastDate.getFullYear();
+            // Extract month (1-indexed) for report filtering
             const month = pastDate.getMonth() + 1;
 
             // Create cost for past month
             // (bypass validation using direct insertion)
             await Cost.collection.insertOne(
                 {
+                    // Cost item description
                     description: 'Old expense',
+                    // Expense category type
                     category: 'health',
+                    // Reference to user who made the expense
                     userid,
+                    // Cost amount in currency units
                     sum: 200,
+                    // Date when expense occurred
                     date: pastDate
                 },
                 { bypassDocumentValidation: true }
@@ -244,17 +287,26 @@ describe('GET /api/report', () => {
                 last_name: 'Williams',
                 birthday: new Date('1995-07-10')
             });
+            // Extract user ID for cost creation
             const userid = user.id;
+            // Get current date for time-based queries
             const now = new Date();
+            // Extract year for report filtering
             const year = now.getFullYear();
+            // Extract month (1-indexed) for report filtering
             const month = now.getMonth() + 1;
 
             // Create cost for current month
             await Cost.create({
+                // Cost item description
                 description: 'Current expense',
+                // Expense category type
                 category: 'food',
+                // Reference to user who made the expense
                 userid,
+                // Cost amount in currency units
                 sum: 30,
+                // Date when expense occurred
                 date: now
             });
 
@@ -287,7 +339,9 @@ describe('GET /api/report', () => {
 
             // Verify 400 error
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'Missing required fields.'
             );
@@ -306,14 +360,15 @@ describe('GET /api/report', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Request without year parameter
             const response = await request(app)
                 .get('/api/report?userid=123&month=1');
 
             // Verify 400 error
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'Missing required fields.'
             );
@@ -332,14 +387,15 @@ describe('GET /api/report', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Request without month parameter
             const response = await request(app)
                 .get('/api/report?userid=123&year=2025');
 
             // Verify 400 error
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'Missing required fields.'
             );
@@ -357,7 +413,9 @@ describe('GET /api/report', () => {
 
             // Verify 400 error
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'User ID, year and month must be positive integers.'
             );
@@ -375,7 +433,6 @@ describe('GET /api/report', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Request with string year
             const response = await request(app).get(
                 '/api/report?userid=123&year=abc&month=1'
@@ -383,7 +440,9 @@ describe('GET /api/report', () => {
 
             // Verify 400 error
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'User ID, year and month must be positive integers.'
             );
@@ -401,7 +460,6 @@ describe('GET /api/report', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Request with string month
             const response = await request(app).get(
                 '/api/report?userid=123&year=2025&month=abc'
@@ -409,7 +467,9 @@ describe('GET /api/report', () => {
 
             // Verify 400 error
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'User ID, year and month must be positive integers.'
             );
@@ -427,7 +487,9 @@ describe('GET /api/report', () => {
 
             // Verify 400 error
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'User ID, year and month must be positive integers.'
             );
@@ -445,7 +507,9 @@ describe('GET /api/report', () => {
 
             // Verify 400 error
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'User ID, year and month must be positive integers.'
             );
@@ -463,7 +527,6 @@ describe('GET /api/report', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Request with negative year
             const response = await request(app).get(
                 '/api/report?userid=123&year=-2025&month=1'
@@ -471,7 +534,9 @@ describe('GET /api/report', () => {
 
             // Verify 400 error
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'User ID, year and month must be positive integers.'
             );
@@ -489,7 +554,6 @@ describe('GET /api/report', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Request with negative month
             const response = await request(app).get(
                 '/api/report?userid=123&year=2025&month=-1'
@@ -497,7 +561,9 @@ describe('GET /api/report', () => {
 
             // Verify 400 error
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'User ID, year and month must be positive integers.'
             );
@@ -515,7 +581,6 @@ describe('GET /api/report', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Request with month=13
             const response = await request(app).get(
                 '/api/report?userid=123&year=2025&month=13'
@@ -523,7 +588,9 @@ describe('GET /api/report', () => {
 
             // Verify 400 error with specific message
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'Month number must be between 1 and 12.'
             );
@@ -541,7 +608,9 @@ describe('GET /api/report', () => {
 
             // Verify user not found error
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'User 999999 does not exist.'
             );
@@ -559,9 +628,13 @@ describe('GET /api/report', () => {
                 last_name: 'Brown',
                 birthday: new Date('1993-11-25')
             });
+            // Extract user ID for cost creation
             const userid = user.id;
+            // Get current date for time-based queries
             const now = new Date();
+            // Extract year for report filtering
             const year = now.getFullYear();
+            // Extract month (1-indexed) for report filtering
             const month = now.getMonth() + 1;
 
             // Request report with no costs
@@ -592,9 +665,13 @@ describe('GET /api/report', () => {
                 last_name: 'Prince',
                 birthday: new Date('1991-06-18')
             });
+            // Extract user ID for cost creation
             const userid = user.id;
+            // Get current date for time-based queries
             const now = new Date();
+            // Extract year for report filtering
             const year = now.getFullYear();
+            // Extract month (1-indexed) for report filtering
             const month = now.getMonth() + 1;
 
             // Request using 'id' instead of 'userid'
@@ -620,7 +697,6 @@ describe('GET /api/report', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Request with month=0
             const response = await request(app).get(
                 '/api/report?userid=123&year=2025&month=0'
@@ -628,7 +704,9 @@ describe('GET /api/report', () => {
 
             // Verify 400 error
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'User ID, year and month must be positive integers.'
             );
@@ -646,7 +724,6 @@ describe('GET /api/report', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Request with year=9999
             const response = await request(app).get(
                 '/api/report?userid=123&year=9999&month=12'
@@ -670,7 +747,6 @@ describe('GET /api/report', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Request with decimal year
             const response = await request(app).get(
                 '/api/report?userid=123&year=2025.5&month=1'
@@ -678,7 +754,9 @@ describe('GET /api/report', () => {
 
             // Verify 400 error for decimal year
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'User ID, year and month must be positive integers.'
             );
@@ -696,7 +774,6 @@ describe('GET /api/report', () => {
                 last_name: 'User',
                 birthday: new Date('1990-01-01')
             });
-
             // Request with decimal month
             const response = await request(app).get(
                 '/api/report?userid=123&year=2025&month=6.5'
@@ -704,7 +781,9 @@ describe('GET /api/report', () => {
 
             // Verify 400 error for decimal month
             expect(response.status).toBe(400);
+            // Check error id is 400
             expect(response.body).toHaveProperty('id', 400);
+            // Check error message matches expected
             expect(response.body.message).toBe(
                 'User ID, year and month must be positive integers.'
             );

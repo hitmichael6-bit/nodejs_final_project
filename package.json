@@ -13,7 +13,7 @@
     "dev:about": "nodemon about_app.js",
     "dev": "concurrently \"npm run dev:logs\" \"npm run dev:users\" \"npm run dev:costs\" \"npm run dev:about\"",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles --forceExit",
-    "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch",
+    "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch --runInBand",
     "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage --detectOpenHandles --forceExit"
   },
   "dependencies": {

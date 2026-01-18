@@ -3,18 +3,20 @@
  * Handles GET requests for retrieving user information.
  * Includes total cost calculation for individual users.
  */
+// Import Express framework for routing
 import express from 'express';
+// Import User model for database operations
 import User from '../models/user.model.js';
+// Import Cost model for calculating user totals
 import Cost from '../models/cost.model.js';
+// Import logging utility for endpoint access tracking
 import { logEndpointAccess } from '../utils/logger.js';
-
 const router = express.Router();
-
 /*
- * GET /users
- * Returns all users from the database.
+ * GET /users - Returns all users from the database.
  * Excludes MongoDB internal fields (_id, __v).
  */
+// Handler for GET requests to /users endpoint
 router.get('/users', async (req, res) => {
     // Log incoming request
     logEndpointAccess(req, 'Endpoint accessed: GET /api/users');
@@ -36,15 +38,17 @@ router.get('/users', async (req, res) => {
             message: 'Internal server error.'
         });
     }
+    // End of GET /users handler
 });
-
 /*
  * GET /users/:id
  * Returns a specific user with their total costs.
  * Uses MongoDB aggregation to calculate the sum of all costs.
  */
+// Handler for GET requests to /users/:id endpoint
 router.get('/users/:id', async (req, res) => {
     try {
+        // Log the incoming request
         logEndpointAccess(
             req,
             `Endpoint accessed: GET /api/users/${req.params.id}`
@@ -60,7 +64,6 @@ router.get('/users/:id', async (req, res) => {
                 message: 'User ID must be a positive integer.'
             });
         }
-
         // Find user by ID
         const user = await User.findOne({ id }).lean();
 
@@ -70,8 +73,8 @@ router.get('/users/:id', async (req, res) => {
                 id: 404,
                 message: `User ${id} does not exist.`
             });
+            // End of user not found check
         }
-
         /*
          * Calculate total costs using MongoDB aggregation.
          * Sums all cost amounts for this user.
@@ -93,7 +96,6 @@ router.get('/users/:id', async (req, res) => {
             id: user.id,
             total
         };
-
         // Return user object with total costs
         return res.status(200).json(userObj);
     } catch (err) {
@@ -104,5 +106,5 @@ router.get('/users/:id', async (req, res) => {
         });
     }
 });
-
+// Export router for use in main application
 export default router;

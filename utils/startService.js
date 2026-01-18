@@ -3,11 +3,14 @@
  * Initializes and starts a microservice with database connection.
  * Handles route mounting and server startup.
  */
+// Factory function to create configured Express application
 import { createServiceApp } from './createServiceApp.js';
+// Database connection utility for MongoDB
 import { connectDb } from '../db.js';
+// Retrieves MongoDB connection URI from configuration
 import getMongoUri from '../config/mongo_conn.js';
+// Pino-based logger for application logging
 import { logger } from './logger.js';
-
 /*
  * Starts a microservice with the given configuration.
  * Connects to MongoDB and starts listening on the specified port.
@@ -28,7 +31,6 @@ export async function startService({ serviceName, port, routers = [] }) {
             message: 'Route not found. Check port and path.'
         });
     });
-
     // Connect to MongoDB (throws error if connection fails)
     await connectDb(getMongoUri());
 
@@ -37,5 +39,6 @@ export async function startService({ serviceName, port, routers = [] }) {
         logger.info(`Service "${serviceName}" running on port ${port}.`);
     });
 
+    // Return the configured Express app instance
     return app;
 }

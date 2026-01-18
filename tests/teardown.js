@@ -4,7 +4,6 @@
  * Leaves only the required user (id: 123123, mosh israeli)
  * in the users collection.
  */
-
 // Import environment configuration
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
@@ -32,13 +31,13 @@ export default async function globalTeardown() {
 
             // Check if URI is available
             if (!mongoUri) {
+                // Log warning message when MongoDB URI is not configured
                 console.log(
                     '⚠️ No MongoDB URI found. ' +
                     'Skipping database cleanup.'
                 );
                 return;
             }
-
             // Establish database connection
             await connectDb(mongoUri);
         }
@@ -56,7 +55,6 @@ export default async function globalTeardown() {
             last_name: 'israeli',
             birthday: new Date('2000-01-01')
         });
-
         // Log successful cleanup
         console.log('\n✅ Database cleaned successfully!');
         console.log(

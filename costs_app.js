@@ -4,7 +4,6 @@
  * Implements the Computed Design Pattern for report caching.
  * Runs on port 3003 (configurable via COSTS_PORT env variable).
  */
-
 // Load environment variables from .env file
 import dotenv from 'dotenv';
 

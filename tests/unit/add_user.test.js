@@ -58,7 +58,6 @@ describe('POST /api/add (User)', () => {
                 last_name: 'Doe',
                 birthday: '1990-01-15'
             };
-
             // Make POST request to create user
             const response = await request(app)
                 .post('/api/add')
@@ -73,7 +72,6 @@ describe('POST /api/add (User)', () => {
             expect(response.body).toHaveProperty('birthday');
         }
     );
-
     // Test missing required fields
     test(
         'should return 400 if id is missing',
@@ -81,6 +79,8 @@ describe('POST /api/add (User)', () => {
             // Send request without id field
             const response = await request(app)
                 .post('/api/add')
+                // Send user data without id
+                // field to test validation
                 .send({
                     first_name: 'John',
                     last_name: 'Doe',
@@ -102,6 +102,8 @@ describe('POST /api/add (User)', () => {
             // Send request without first_name field
             const response = await request(app)
                 .post('/api/add')
+                // Send user data without first_name
+                // field to test validation
                 .send({
                     id: 123,
                     last_name: 'Doe',
@@ -123,13 +125,14 @@ describe('POST /api/add (User)', () => {
             // Send whitespace-only first_name
             const response = await request(app)
                 .post('/api/add')
+                // Send user data with whitespace-only
+                // first_name to test validation
                 .send({
                     id: 123,
                     first_name: '   ',
                     last_name: 'Doe',
                     birthday: '1990-01-15'
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -145,6 +148,8 @@ describe('POST /api/add (User)', () => {
             // Send request without last_name
             const response = await request(app)
                 .post('/api/add')
+                // Send user data without last_name
+                // field to test validation
                 .send({
                     id: 123,
                     first_name: 'John',
@@ -166,13 +171,14 @@ describe('POST /api/add (User)', () => {
             // Send whitespace-only last_name
             const response = await request(app)
                 .post('/api/add')
+                // Send user data with whitespace-only
+                // last_name to test validation
                 .send({
                     id: 123,
                     first_name: 'John',
                     last_name: '   ',
                     birthday: '1990-01-15'
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -188,6 +194,8 @@ describe('POST /api/add (User)', () => {
             // Send request without birthday
             const response = await request(app)
                 .post('/api/add')
+                // Send user data without birthday
+                // field to test validation
                 .send({
                     id: 123,
                     first_name: 'John',
@@ -209,13 +217,14 @@ describe('POST /api/add (User)', () => {
             // Send string ID instead of number
             const response = await request(app)
                 .post('/api/add')
+                // Send user data with string
+                // id to test validation
                 .send({
                     id: 'abc',
                     first_name: 'John',
                     last_name: 'Doe',
                     birthday: '1990-01-15'
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -232,13 +241,14 @@ describe('POST /api/add (User)', () => {
             // Send negative ID
             const response = await request(app)
                 .post('/api/add')
+                // Send user data with negative
+                // id to test validation
                 .send({
                     id: -5,
                     first_name: 'John',
                     last_name: 'Doe',
                     birthday: '1990-01-15'
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -255,13 +265,14 @@ describe('POST /api/add (User)', () => {
             // Send zero as ID
             const response = await request(app)
                 .post('/api/add')
+                // Send user data with zero
+                // id to test validation
                 .send({
                     id: 0,
                     first_name: 'John',
                     last_name: 'Doe',
                     birthday: '1990-01-15'
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -278,13 +289,14 @@ describe('POST /api/add (User)', () => {
             // Send decimal ID
             const response = await request(app)
                 .post('/api/add')
+                // Send user data with decimal
+                // id to test validation
                 .send({
                     id: 123.5,
                     first_name: 'John',
                     last_name: 'Doe',
                     birthday: '1990-01-15'
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -301,13 +313,14 @@ describe('POST /api/add (User)', () => {
             // Send invalid date string
             const response = await request(app)
                 .post('/api/add')
+                // Send user data with invalid
+                // birthday format to test validation
                 .send({
                     id: 123,
                     first_name: 'John',
                     last_name: 'Doe',
                     birthday: 'invalid-date'
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -327,13 +340,14 @@ describe('POST /api/add (User)', () => {
             // Send future birthday
             const response = await request(app)
                 .post('/api/add')
+                // Send user data with future
+                // birthday to test validation
                 .send({
                     id: 123,
                     first_name: 'John',
                     last_name: 'Doe',
                     birthday: tomorrow.toISOString()
                 });
-
             // Verify 400 error
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty('id', 400);
@@ -354,13 +368,14 @@ describe('POST /api/add (User)', () => {
             // Send request with today's date
             const response = await request(app)
                 .post('/api/add')
+                // Send user data with today as
+                // birthday to verify acceptance
                 .send({
                     id: 123,
                     first_name: 'John',
                     last_name: 'Doe',
                     birthday: today.toISOString()
                 });
-
             // Verify 201 Created
             expect(response.status).toBe(201);
         }
@@ -377,7 +392,6 @@ describe('POST /api/add (User)', () => {
                 last_name: 'Smith',
                 birthday: '1995-06-20'
             };
-
             // Create user via API
             await request(app)
                 .post('/api/add')
@@ -399,13 +413,14 @@ describe('POST /api/add (User)', () => {
             // Send ISO 8601 date format
             const response = await request(app)
                 .post('/api/add')
+                // Send user data with ISO 8601
+                // formatted birthday to test parsing
                 .send({
                     id: 789,
                     first_name: 'Bob',
                     last_name: 'Johnson',
                     birthday: '2000-12-31T00:00:00.000Z'
                 });
-
             // Verify 201 Created
             expect(response.status).toBe(201);
         }
@@ -422,17 +437,17 @@ describe('POST /api/add (User)', () => {
                 last_name: 'Doe',
                 birthday: new Date('1990-01-01')
             });
-
             // Try to create another user with same ID
             const response = await request(app)
                 .post('/api/add')
+                // Send user data with duplicate
+                // id to test conflict handling
                 .send({
                     id: 123,
                     first_name: 'Jane',
                     last_name: 'Smith',
                     birthday: '1992-05-15'
                 });
-
             // Verify 409 Conflict
             expect(response.status).toBe(409);
             expect(response.body).toHaveProperty('id', 409);
@@ -448,13 +463,14 @@ describe('POST /api/add (User)', () => {
             // Send names with leading/trailing whitespace
             const response = await request(app)
                 .post('/api/add')
+                // Send user data with whitespace
+                // in names to test trimming
                 .send({
                     id: 123,
                     first_name: '  John  ',
                     last_name: '  Doe  ',
                     birthday: '1990-01-15'
                 });
-
             // Verify names are trimmed in response
             expect(response.status).toBe(201);
             expect(response.body.first_name).toBe('John');
@@ -469,13 +485,14 @@ describe('POST /api/add (User)', () => {
             // Send request with numeric ID
             const response = await request(app)
                 .post('/api/add')
+                // Send user data with numeric
+                // id to verify type conversion
                 .send({
                     id: 999,
                     first_name: 'Alice',
                     last_name: 'Williams',
                     birthday: '1985-03-10'
                 });
-
             // Verify ID is stored as number
             expect(response.status).toBe(201);
             expect(response.body.id).toBe(999);
@@ -490,13 +507,14 @@ describe('POST /api/add (User)', () => {
             // Send request with 1900 birth year
             const response = await request(app)
                 .post('/api/add')
+                // Send user data with very old
+                // birthday to test date range
                 .send({
                     id: 456,
                     first_name: 'Ancient',
                     last_name: 'Person',
                     birthday: '1900-01-01'
                 });
-
             // Verify old date is accepted
             expect(response.status).toBe(201);
             expect(response.body.first_name).toBe('Ancient');
